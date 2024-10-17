@@ -12,12 +12,20 @@ import HallBooking from './HallBooking';
 import CatererBooking from './CatererBooking';
 import DecoratorBooking from './DecoratorBooking';
 import SideDrawer from './SideDrawer.jsx';
+import NavBar from './NavBar.jsx';
 
 
 const BookingPage = () => {
-  const {location}=useParams()
+  
   return (
     <>
+    <Grid container >
+
+      <Grid item lg={12}>
+
+        <NavBar />
+      </Grid>
+    </Grid>
     <Grid container style={{padding:20}}>
       
     <Grid item lg={3}>
@@ -38,11 +46,6 @@ const BookingPage = () => {
   )
 }
 
-const sort = [
-    { label: 'Rating', year: 1994 },
-    { label: 'Price high to low', year: 1972 },
-    { label: 'Price low to high', year: 1974 },
-    { label: 'Popularity', year: 2008 },
-    ]
+
 
 export default BookingPage

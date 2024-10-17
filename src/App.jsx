@@ -14,7 +14,7 @@ const App = () => {
     justifyContent={"flex-end"}
     alignItems={"center"} >
 
-     <NavBar />
+    
      <All />
 
     </Grid>

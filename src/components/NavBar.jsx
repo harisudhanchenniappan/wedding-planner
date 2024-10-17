@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Grid, Typography, AppBar, Button } from '@mui/material';
 import LoginModal from './LoginModal';
 import SignupModal from './SignupModal';
+import { Link } from 'react-router-dom';
 
 const NavBar = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -33,9 +34,12 @@ const NavBar = () => {
 
                 <Grid item style={{ paddingRight: 20 }}>
                     {isLoggedIn ? (
+                        <Link to={'/'}>
                         <Button onClick={handleLogout}> 
                             Logout
                         </Button>
+                        </Link>
+                        
                     ) : (
                         <Grid container spacing={2}>
                             <Grid item>
