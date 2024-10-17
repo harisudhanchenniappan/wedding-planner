@@ -1,0 +1,16 @@
+.caterer-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .caterer-card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    margin: 10px;
+    width: 250px;
+    text-align: left;
+    box-shadow: 2px 2px 12px #aaa;
+  }
+  

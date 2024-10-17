@@ -1,0 +1,24 @@
+.decorator-cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .decorator-card {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    margin: 10px;
+    width: 250px;
+    text-align: left;
+    box-shadow: 2px 2px 12px #aaa;
+  }
+
+  .decorator-card:hover {
+    transform: scale(1.05);
+  }
+
+  .list:hover{
+    transform: scale(1.05);
+  }
