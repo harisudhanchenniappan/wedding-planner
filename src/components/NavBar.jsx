@@ -1,57 +1,55 @@
-import React from 'react'
-import { Grid,Typography,AppBar ,Autocomplete,TextField, Button} from '@mui/material'
-import { Navigate, useNavigate } from 'react-router-dom';
-//import SearchIcon from '@mui/icons-material/Search';
- import LoginModal from './LoginModal';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Grid, Typography, AppBar, Button } from '@mui/material';
+import LoginModal from './LoginModal';
+import SignupModal from './SignupModal';
 
 const NavBar = () => {
-  
-  return (
-    <AppBar color="transparent" position='static'>
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    <Grid container
-        style={{
-            //width:1170,
-            margin:"auto",
-        }}
-        spacing={2}
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        >
+    useEffect(() => {
+        setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
+    }, []);
 
-        <Grid item>
-            <img src="https://www.guvi.in/assets/CPYoUJqK-guvilogo-hcl.webp" alt="" style={{width:150}}/>
-        </Grid>
-        
-        <Grid item>
-        <Typography>
-            <h1 style={{color:'red'}}>WeddingWise.com</h1>
-             </Typography>
-        </Grid>
+    const handleLogout = () => {
+        localStorage.setItem('isLoggedIn', 'false');
+        localStorage.setItem('id', '');
+        setIsLoggedIn(false);
+        window.location.reload();
+    };
 
-        <Grid item style={{paddingRight:20}}> 
-        <Grid item>
-        <Button size="medium">Login</Button>
-        </Grid>
-        <Grid item> 
-        <Button size="medium">Signup</Button>
-        </Grid>
+    return (
+        <AppBar color="transparent" position='static'>
+            <Grid container
+                style={{ margin: "auto" }}
+                spacing={2}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+            >
+                <Grid item>
+                    <Typography>
+                        <h1 style={{ color: 'red' }}>WeddingWise.com</h1>
+                    </Typography>
+                </Grid>
 
-        </Grid>
-
-       
-
-    </Grid>
-
-
-
-    
-
-    </AppBar>
-  )
+                <Grid item style={{ paddingRight: 20 }}>
+                    {isLoggedIn ? (
+                        <Button onClick={handleLogout}> 
+                            Logout
+                        </Button>
+                    ) : (
+                        <Grid container spacing={2}>
+                            <Grid item>
+                                <LoginModal />
+                            </Grid>
+                            <Grid item>
+                                <SignupModal />
+                            </Grid>
+                        </Grid>
+                    )}
+                </Grid>
+            </Grid>
+        </AppBar>
+    );
 }
 
-
-
-export default NavBar
+export default NavBar;

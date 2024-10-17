@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './DecoratorBooking.css'; 
+import axios from 'axios';
 
 const DecoratorBooking = () => {
   const [decorators] = useState([
@@ -28,13 +29,59 @@ const DecoratorBooking = () => {
   const [bookedDecorators, setBookedDecorators] = useState([]);
   const [bookingDate, setBookingDate] = useState('');
 
-  const bookDecorator = (decorator) => {
-    setBookedDecorators([...bookedDecorators, { ...decorator, bookingDate }]);
-    setBookingDate('');
+  useEffect(() => {
+    const fetchBookedDecorators = async () => {
+      const userId = localStorage.getItem('id'); 
+      if (userId) {
+        try {
+          const response = await axios.get(`https://wedding-planner-2.onrender.com/booked-decorators/${userId}`);
+          setBookedDecorators(response.data);
+        } catch (error) {
+          console.error('Error fetching booked decorators:', error);
+        }
+      }
+    };
+
+    fetchBookedDecorators();
+  }, []);
+
+  const bookDecorator = async (decorator) => {
+    if (!bookingDate) {
+      alert('Booking date required');
+      return;
+    }
+
+    const userId = localStorage.getItem('id'); 
+    try {
+      const response = await axios.post('https://wedding-planner-2.onrender.com/book-decorator', {
+        userId,
+        decoratorId: decorator.id,
+        decoratorName: decorator.name,
+        bookingDate,
+        theme: decorator.theme,
+        contactNumber: decorator.contact,
+        minBudget:decorator.minBudget
+      });
+      setBookedDecorators(prevBookings => [...prevBookings, response.data.booking]);
+      setBookingDate('');
+    } catch (error) {
+      alert(error.response ? error.response.data.error : 'An error occurred while booking the decorator.');
+    }
   };
 
-  const cancelBooking = (id) => {
-    setBookedDecorators(bookedDecorators.filter(decorator => decorator.id !== id));
+  const cancelBooking = async (bookingId) => {
+    const confirmed = window.confirm('Are you sure you want to cancel this booking?');
+
+    if (!confirmed) {
+      return; 
+    }
+
+    try {
+      await axios.delete(`https://wedding-planner-2.onrender.com/cancel-decorator-booking/${bookingId}`);
+      setBookedDecorators(prevBookings => prevBookings.filter(decorator => decorator._id !== bookingId));
+    } catch (error) {
+      alert(error.response ? error.response.data.error : 'An error occurred while cancelling the booking.');
+    }
   };
 
   return (
@@ -44,13 +91,13 @@ const DecoratorBooking = () => {
       <h2>Booked Decorators</h2>
       <div className="decorator-cards">
         {bookedDecorators.map((booking) => (
-          <div className="decorator-card" key={booking.id}>
-            <h3>{booking.name}</h3>
+          <div className="decorator-card" key={booking._id}>
+            <h3>{booking.decoratorName}</h3>
             <p>Min Budget: ₹{booking.minBudget}</p>
             <p>Theme: {booking.theme}</p>
-            <p>Contact: {booking.contact}</p>
+            <p>Contact: {booking.contactNumber}</p>
             <p>Booking Date: {booking.bookingDate}</p>
-            <button onClick={() => cancelBooking(booking.id)}>Cancel Booking</button>
+            <button onClick={() => cancelBooking(booking._id)}>Cancel Booking</button>
           </div>
         ))}
       </div>
@@ -67,7 +114,7 @@ const DecoratorBooking = () => {
               type="date"
               value={bookingDate}
               onChange={(e) => setBookingDate(e.target.value)}
-              placeholder="Select Booking Date"
+              placeholder="Select Booking Date" 
             />
             <button onClick={() => bookDecorator(decorator)}>
               Book Decorator

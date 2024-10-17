@@ -1,9 +1,9 @@
-import * as React from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-
+import { Grid } from '@mui/material'; // Fixed import
+import axios from 'axios';
 
 const style = {
     position: 'absolute',
@@ -15,34 +15,90 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
-  };
-   
+};
+
+const inputStyle = {
+    width: '100%',
+    padding: '10px',
+    margin: '10px 0',
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+};
+
+const buttonStyle = {
+    display: 'block',
+    margin: '0 auto',
+};
 
 const LoginModal = () => {
     const [open, setOpen] = React.useState(false);
+    const [username, setUsername] = React.useState(''); 
+    const [password, setPassword] = React.useState('');
+
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-  
-    return (
-      <div>
-        <Button onClick={handleOpen}>Open modal</Button>
-        <Modal
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box sx={style}>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Text in a modal
-            </Typography>
-            <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-            </Typography>
-          </Box>
-        </Modal>
-      </div>
-    );
-}
 
-export default LoginModal
+    const handleLogin = async () => {
+        if (!username || !password) {
+            alert('Please fill in both fields');
+            return;
+        }
+
+        try {
+            const response = await axios.post('https://wedding-planner-2.onrender.com/login', {
+                username,
+                password
+            });
+            localStorage.setItem('id', response.data.id);
+            localStorage.setItem('isLoggedIn', 'true');
+            handleClose();
+            window.location.reload(); 
+        } catch (error) {
+            console.error(error.response ? error.response.data : error.message);
+            alert(error.response ? error.response.data.error : 'An error occurred');
+        }
+    };
+
+    return (
+        <div>
+            <Button onClick={handleOpen}>Login</Button>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Grid container direction="column" alignItems="center">
+                        <Grid item>
+                            <input 
+                                type="text" 
+                                placeholder='Username' 
+                                style={inputStyle} 
+                                onChange={(e) => setUsername(e.target.value)}
+                            />
+                            <input 
+                                type="password" 
+                                placeholder='Password' 
+                                style={inputStyle} 
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                        </Grid>
+                        <Button 
+                            variant="contained" 
+                            onClick={handleLogin} 
+                            style={buttonStyle}
+                        >
+                            Submit
+                        </Button>
+                    </Grid>
+                </Box>
+            </Modal>
+        </div>
+    );
+};
+
+export default LoginModal;
+
+
+

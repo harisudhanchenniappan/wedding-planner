@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
-import './HallBooking.css'; // Ensure you have this CSS file for styling
+import React, { useState,useEffect } from 'react';
+import './HallBooking.css'; 
+import axios from 'axios';
+
 
 const HallBooking = () => {
   const [halls] = useState([
@@ -36,6 +38,23 @@ const HallBooking = () => {
     capacity: false,
   });
 
+
+  useEffect(() => {
+    const fetchBookedHalls = async () => {
+        const userId = localStorage.getItem('id'); 
+        if (!userId) return; 
+
+        try {
+            const response = await axios.get(`https://wedding-planner-2.onrender.com/booked-halls/${userId}`);
+            setBookedHalls(response.data);
+        } catch (error) {
+            console.error(error.response ? error.response.data : error.message);
+        }
+    };
+
+    fetchBookedHalls();
+}, []);
+
   const handleBooking = (hall) => {
     setSelectedHall(hall);
   };
@@ -45,15 +64,45 @@ const HallBooking = () => {
     setBookingDetails({ ...bookingDetails, [name]: value });
   };
 
-  const confirmBooking = () => {
-    setBookedHalls([...bookedHalls, { ...selectedHall, bookingDetails }]);
-    setSelectedHall(null);
-    setBookingDetails({ name: '', date: '' });
-  };
+  const confirmBooking = async () => {
+    const userId = localStorage.getItem('id'); 
+    if (!userId) {
+        alert('You must be logged in to book a hall.');
+        return;
+    }
 
-  const cancelBooking = (hallId) => {
-    setBookedHalls(bookedHalls.filter(booking => booking.id !== hallId));
-  };
+    try {
+        const response = await axios.post('https://wedding-planner-2.onrender.com/book-hall', {
+            userId,
+            hallId: selectedHall.id,
+            hallName: selectedHall.name,
+            bookingDetails,
+        });
+        setBookedHalls([...bookedHalls, response.data.booking]);
+        setSelectedHall(null);
+        setBookingDetails({ name: '', date: '' });
+    } catch (error) {
+        console.error(error.response ? error.response.data : error.message);
+        alert(error.response ? error.response.data.error : 'An error occurred while booking the hall.');
+    }
+};
+
+const cancelBooking = async (bookingId) => {
+  const confirmed = window.confirm('Are you sure you want to cancel this booking?');
+
+  if (!confirmed) {
+      return; 
+  }
+
+  try {
+      await axios.delete(`https://wedding-planner-2.onrender.com/cancel-booking/${bookingId}`);
+      setBookedHalls(bookedHalls.filter(booking => booking._id !== bookingId)); 
+  } catch (error) {
+      console.error(error.response ? error.response.data : error.message);
+      alert(error.response ? error.response.data.error : 'An error occurred while cancelling the booking.');
+  }
+};
+
 
   const handleLocationChange = (e) => {
     const { name, checked } = e.target;
@@ -95,8 +144,7 @@ const HallBooking = () => {
   return (
     <div style={{ padding: '20px', textAlign: 'center' }}>
       <h1>Wedding Hall Booking</h1>
-      <h2>Available Halls</h2>
-
+      
       <div>
         <h3>Location</h3>
         {Object.keys(locationFilters).map(location => (
@@ -160,6 +208,46 @@ const HallBooking = () => {
 
       <button onClick={clearAllFilters}>Clear All Filters</button>
 
+      {selectedHall && (
+        <div style={{ marginTop: '20px' }}>
+          <h2>Booking Form for {selectedHall.name}</h2>
+          <input
+            type="text"
+            name="name"
+            placeholder="Your Name"
+            value={bookingDetails.name}
+            onChange={handleChange}
+            required
+            style={{ marginRight: '10px' }}
+          />
+          <input
+            type="date"
+            name="date"
+            value={bookingDetails.date}
+            onChange={handleChange}
+            required
+            style={{ marginRight: '10px' }}
+          />
+          <button onClick={confirmBooking}>Confirm Booking</button>
+        </div>
+      )}
+
+
+      <h2>Booked Halls</h2>
+      <div className="hall-cards">
+                {bookedHalls.map((booking) => (
+                    <div className="hall-card" key={booking.hallId}>
+                        <img src={booking.hallImage} alt={booking.hallName} style={{ width: '100%', height: 'auto' }} />
+                        <h3>{booking.hallName}</h3>
+                        <p>Booked By: {booking.bookingDetails.name}</p>
+                        <p>Date: {new Date(booking.bookingDetails.date).toLocaleDateString()}</p>
+                        <button onClick={() => cancelBooking(booking._id)}>Cancel Booking</button>
+
+                    </div>
+                ))}
+            </div>
+
+      <h2>Available Halls</h2>
       <div className="hall-cards">
         {filteredHalls.map(hall => (
           <div className="hall-card" key={hall.id}>
@@ -197,18 +285,8 @@ const HallBooking = () => {
         </div>
       )}
 
-      <h2>Booked Halls</h2>
-      <div className="hall-cards">
-        {bookedHalls.map((booking) => (
-          <div className="hall-card" key={booking.id}>
-            <img src={booking.image} alt={booking.name} style={{ width: '100%', height: 'auto' }} />
-            <h3>{booking.name}</h3>
-            <p>Booked By: {booking.bookingDetails.name}</p>
-            <p>Date: {booking.bookingDetails.date}</p>
-            <button onClick={() => cancelBooking(booking.id)}>Cancel Booking</button>
-          </div>
-        ))}
-      </div>
+      
+      
     </div>
   );
 };

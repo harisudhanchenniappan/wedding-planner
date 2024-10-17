@@ -1,7 +1,8 @@
-// src/PhotographerBooking.js
-import React, { useState } from 'react';
 
-// Sample data for photographers (total of 20 photographers)
+import React, { useState,useEffect } from 'react';
+import axios from 'axios';
+
+
 const photographersData = [
   { id: 1, name: 'Photographer A', budget: 500, contact: '123-456-7890', videoCost: 150, droneCost: 200 },
   { id: 2, name: 'Photographer B', budget: 600, contact: '987-654-3210', videoCost: 200, droneCost: 250 },
@@ -30,15 +31,77 @@ const PhotographerBooking = () => {
   const [selectedPhotographers, setSelectedPhotographers] = useState([]);
   const [minBudget, setMinBudget] = useState('');
   const [maxBudget, setMaxBudget] = useState('');
+  const [bookedPhotographers, setBookedPhotographers] = useState([]);
 
-  const handleSelectPhotographer = (photographer) => {
-    if (selectedPhotographers.includes(photographer.id)) {
-      setSelectedPhotographers(selectedPhotographers.filter(id => id !== photographer.id));
+  useEffect(() => {
+    const fetchBookedPhotographers = async () => {
+      const userId = localStorage.getItem('id');
+      if (!userId) {
+        alert('User is not logged in.');
+        return; 
+      }
+      try {
+        const response = await axios.get(`https://wedding-planner-2.onrender.com/photographer-bookings/${userId}`);
+        setBookedPhotographers(response.data);
+      } catch (error) {
+        console.error('Error fetching booked photographers:', error);
+      }
+    };
+    fetchBookedPhotographers();
+  }, []);
+
+  const cancelBooking = async (bookingId) => {
+    try {
+      const response = await axios.delete(`https://wedding-planner-2.onrender.com/photographer-bookings/${bookingId}`);
+      setBookedPhotographers(bookedPhotographers.filter(booking => booking._id !== bookingId));
+      setSelectedPhotographers(selectedPhotographers.filter(id => id !== bookingId));
+      alert(response.data.message);
+    } catch (error) {
+      console.error('Error canceling booking:', error);
+      alert(error.response ? error.response.data.error : 'An error occurred while canceling the booking.');
+    }
+  };
+
+
+  const handleSelectPhotographer = async (photographer) => {
+    const booking = bookedPhotographers.find(b => b.photographerId === photographer.id);
+    
+    if (booking) {
+      console.log(booking._id)
+      const confirmed = window.confirm(`Are you sure you want to cancel booking for ${photographer.name}?`);
+      if (confirmed) {
+        console.log(booking._id)
+        await cancelBooking(booking._id); 
+      }
     } else {
       const confirmBooking = window.confirm(`Confirm booking for ${photographer.name}?`);
       if (confirmBooking) {
-        setSelectedPhotographers([...selectedPhotographers, photographer.id]);
+        await bookPhotographer(photographer);
       }
+    }
+  };
+
+  
+  const bookPhotographer = async (photographer) => {
+    const userId = localStorage.getItem('id');
+    const videoSelected = photographer.selectedVideo || false;
+    const droneSelected = photographer.selectedDrone || false;
+
+    try {
+      const response = await axios.post('https://wedding-planner-2.onrender.com/photographer-bookings', {
+        userId,
+        photographerId: photographer.id,
+        photographerName: photographer.name,
+        budget:photographer.budget,
+        videoSelected,
+        droneSelected,
+        contactNumber: photographer.contact,
+      });
+      setBookedPhotographers([...bookedPhotographers, response.data.booking]);
+      setSelectedPhotographers([...selectedPhotographers, photographer.id]);
+    } catch (error) {
+      console.error('Error booking photographer:', error);
+      alert(error.response ? error.response.data.error : 'An error occurred while booking the photographer.');
     }
   };
 
@@ -63,7 +126,7 @@ const PhotographerBooking = () => {
     return budget >= min && budget <= max;
   });
 
-  const bookedPhotographers = filteredPhotographers.filter(photographer => 
+  const bookedPhotographersFiltered = filteredPhotographers.filter(photographer => 
     selectedPhotographers.includes(photographer.id)
   );
 
@@ -98,34 +161,22 @@ const PhotographerBooking = () => {
           const totalCost = photographer.budget + additionalCost;
 
           return (
-            <div key={photographer.id} className="card" style={{ border: '2px solid green' }}>
-              <h3>{photographer.name}</h3>
-              <p>Budget: ${photographer.budget}</p>
-              <p>Contact: {photographer.contact}</p>
-              <p>Total Cost: ${totalCost}</p>
+            <div key={photographer._id} className="card" style={{ border: '2px solid green' }}>
+              <h3>{photographer.photographerName}</h3>
+              <p>Min-Budget: ${photographer.budget}</p>
+              <p>Contact: {photographer.contactNumber}</p>
+              
+              {
+                photographer.videoSelected?<p>Video included</p>:<p></p>
+                }
+                
+                {
+                photographer.droneSelected?<p>Drone included</p>:<p></p>
+              }
 
-              <div>
-                <label>
-                  <input 
-                    type="checkbox" 
-                    checked={photographer.selectedVideo} 
-                    onChange={() => handleCheckboxChange(photographer.id, 'video')} 
-                  />
-                  Video (+${photographer.videoCost})
-                </label>
-              </div>
-              <div>
-                <label>
-                  <input 
-                    type="checkbox" 
-                    checked={photographer.selectedDrone} 
-                    onChange={() => handleCheckboxChange(photographer.id, 'drone')} 
-                  />
-                  Drone (+${photographer.droneCost})
-                </label>
-              </div>
-              <button onClick={() => handleSelectPhotographer(photographer)}>
-                Deselect
+             
+              <button onClick={()=> cancelBooking(photographer._id)}>
+                Cancel Booking
               </button>
             </div>
           );
@@ -142,9 +193,9 @@ const PhotographerBooking = () => {
           return (
             <div key={photographer.id} className="card">
               <h3>{photographer.name}</h3>
-              <p>Budget: ${photographer.budget}</p>
+              <p>Min-Budget: ${photographer.budget}</p>
               <p>Contact: {photographer.contact}</p>
-              <p>Total Cost: ${totalCost}</p>
+              <p>Total Budget: ${totalCost}</p>
 
               <div>
                 <label>
@@ -178,4 +229,3 @@ const PhotographerBooking = () => {
 };
 
 export default PhotographerBooking;
-``

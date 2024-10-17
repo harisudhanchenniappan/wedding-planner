@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import './CatererBooking.css'; // Ensure you have this CSS file for styling
+import React, { useState,useEffect} from 'react';
+import './CatererBooking.css'; 
+import axios from 'axios';
 
 const CatererBooking = () => {
   const [caterers] = useState([
@@ -32,21 +33,66 @@ const CatererBooking = () => {
   const [cuisineFilter, setCuisineFilter] = useState('');
   const [priceRange, setPriceRange] = useState([0, 1000]);
 
-  const handleBooking = (caterer) => {
-    setBookedCaterers([...bookedCaterers, { ...caterer, guestCount }]);
-    setGuestCount(0);
-    setSelectedCaterer(null);
-  };
+  useEffect(() => {
+    const fetchBookedCaterers = async () => {
+        const userId = localStorage.getItem('id');
+        if (userId) {
+            try {
+                const response = await axios.get(`https://wedding-planner-2.onrender.com/booked-caterers/${userId}`);
+                setBookedCaterers(response.data);
+            } catch (error) {
+                console.error('Error fetching booked caterers:', error);
+            }
+        }
+    };
+    fetchBookedCaterers();
+}, []);
 
-  const cancelBooking = (id) => {
-    setBookedCaterers(bookedCaterers.filter(caterer => caterer.id !== id));
-  };
+const handleBooking = async (caterer) => {
+    if (guestCount <= 0) {
+        alert('Guest count must be greater than 0');
+        return;
+    }
 
-  const filteredCaterers = caterers.filter(caterer => {
-    const isCuisineMatch = !cuisineFilter || caterer.cuisine === cuisineFilter;
-    const isPriceMatch = caterer.pricePerPerson >= priceRange[0] && caterer.pricePerPerson <= priceRange[1];
-    return isCuisineMatch && isPriceMatch;
-  });
+    const userId = localStorage.getItem('id');
+    try {
+        const response = await axios.post('https://wedding-planner-2.onrender.com/book-caterer', {
+            userId,
+            catererId: caterer.id,
+            catererName: caterer.name,
+            guestCount,
+            contactNumber: caterer.contact,
+            pricePerPerson:caterer.pricePerPerson,
+            cuisine:caterer.cuisine
+        });
+        setBookedCaterers([...bookedCaterers, response.data.booking]);
+        setGuestCount(0);
+        setSelectedCaterer(null);
+    } catch (error) {
+        alert(error.response ? error.response.data.error : 'An error occurred while booking the caterer.');
+    }
+};
+
+const cancelBooking = async (id) => {
+    const confirmed = window.confirm('Are you sure you want to cancel this booking?');
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        await axios.delete(`https://wedding-planner-2.onrender.com/cancel-caterer-booking/${id}`);
+        setBookedCaterers(bookedCaterers.filter(caterer => caterer._id !== id));
+    } catch (error) {
+        alert(error.response ? error.response.data.error : 'An error occurred while cancelling the booking.');
+    }
+};
+
+const filteredCaterers = caterers.filter(caterer => {
+  const isCuisineMatch = !cuisineFilter || caterer.cuisine === cuisineFilter;
+  const isPriceMatch = caterer.pricePerPerson >= priceRange[0] && caterer.pricePerPerson <= priceRange[1];
+  return isCuisineMatch && isPriceMatch;
+});
+
 
   return (
     <div style={{ padding: '20px', textAlign: 'center' }}>
@@ -80,42 +126,39 @@ const CatererBooking = () => {
       <div className="caterer-cards">
         {bookedCaterers.map((booking) => (
           <div className="caterer-card" key={booking.id}>
-            <h3>{booking.name}</h3>
+            <h3>{booking.catererName}</h3>
             <p>Cuisine: {booking.cuisine}</p>
             <p>Price per Person: ₹{booking.pricePerPerson}</p>
             <p>Number of Guests: {booking.guestCount}</p>
             <p>Total Budget: ₹{booking.guestCount * booking.pricePerPerson}</p>
-            <p>Contact: {booking.contact}</p>
-            <button onClick={() => cancelBooking(booking.id)}>Cancel Booking</button>
+            <p>Contact: {booking.contactNumber}</p>
+            <button onClick={() => cancelBooking(booking._id)}>Cancel Booking</button>
           </div>
         ))}
       </div>
 
       <h2>Our Caterers</h2>
-      <div className="caterer-cards">
-        {filteredCaterers.map(caterer => (
-          <div className="caterer-card" key={caterer.id}>
-            <h3>{caterer.name}</h3>
-            <p>Cuisine: {caterer.cuisine}</p>
-            <p>Price per Person: ₹{caterer.pricePerPerson}</p>
-            <input
-              type="number"
-              placeholder="Number of Guests"
-              value={guestCount}
-              onChange={(e) => setGuestCount(+e.target.value)}
-              min="0"
-            />
-            <p>Total Budget: ₹{guestCount * caterer.pricePerPerson}</p>
-            <button onClick={() => {
-              setSelectedCaterer(caterer);
-              handleBooking(caterer);
-            }}>
-              Book Caterer
-            </button>
-            <p>Contact: {caterer.contact}</p>
-          </div>
-        ))}
-      </div>
+            <div className="caterer-cards">
+                {filteredCaterers.map(caterer => (
+                    <div className="caterer-card" key={caterer.id}>
+                        <h3>{caterer.name}</h3>
+                        <p>Cuisine: {caterer.cuisine}</p>
+                        <p>Price per Person: ₹{caterer.pricePerPerson}</p>
+                        <input
+                            type="number"
+                            placeholder="Number of Guests"
+                            value={guestCount}
+                            onChange={(e) => setGuestCount(+e.target.value)}
+                            min="0"
+                        />
+                        <p>Total Budget: ₹{guestCount * caterer.pricePerPerson}</p>
+                        <button onClick={() => handleBooking(caterer)}>
+                            Book Caterer
+                        </button>
+                        <p>Contact: {caterer.contact}</p>
+                    </div>
+                ))}
+            </div>
 
      
     </div>

@@ -21,7 +21,7 @@ const router=createBrowserRouter([
     children:[
       {
         index:true,
-        element:<HotelList />
+        element:<Home />
       },
       {
         path:'/Home',

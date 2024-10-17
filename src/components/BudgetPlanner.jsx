@@ -1,4 +1,3 @@
-// src/BudgetPlanner.js
 import React, { useState } from 'react';
 
 const defaultExpenses = [
@@ -7,7 +6,7 @@ const defaultExpenses = [
   { name: 'Photographer', cost: 0 },
   { name: 'Decorator', cost: 0 },
   { name: 'Music', cost: 0 },
-  
+  { name: 'Other', cost: 0 },
 ];
 
 const BudgetPlanner = () => {
@@ -19,12 +18,12 @@ const BudgetPlanner = () => {
   const [editingIndex, setEditingIndex] = useState(null);
 
   const calculateTotalExpenses = () => {
-    return items.reduce((total, item) => total + item.cost, 0);
+    return items.reduce((total, item) => total + (item.amountPaid || 0), 0);
   };
 
   const handleAddItem = (e) => {
     e.preventDefault();
-    if (!itemName || !itemCost) return;
+    if (!itemName || itemCost === '') return;
 
     const newItem = {
       name: itemName,
@@ -142,7 +141,6 @@ const BudgetPlanner = () => {
                 </td>
                 <td>{balanceAmount.toFixed(2)}</td>
                 <td>{paymentStatus}</td>
-               
                 <td>
                   {index >= defaultExpenses.length && (
                     <button onClick={() => handleDeleteItem(index)}>Delete</button>
@@ -154,7 +152,6 @@ const BudgetPlanner = () => {
         </tbody>
       </table>
 
-     
       <h3>Total Expenses: {totalExpenses.toFixed(2)}</h3>
       <h3>Available Budget: {(initialBudget - totalExpenses).toFixed(2)}</h3>
     </div>
