@@ -5,7 +5,7 @@ import AccordionActions from '@mui/material/AccordionActions';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import HotelList from './HotelList';
+
 import { Outlet, useParams } from 'react-router-dom';
 import EventPlanner from './EventPlanner';
 import HallBooking from './HallBooking';
