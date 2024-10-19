@@ -17,13 +17,13 @@ import Login from './Login'
 
 const router=createBrowserRouter([
 {
-path:'/',
+path:'/login',
 element:<Login />
 
 },
 
   {
-    path:'/bookingPage',
+    path:'/',
     element: <BookingPage />,
     children:[
       {
