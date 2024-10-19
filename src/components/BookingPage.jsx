@@ -19,21 +19,21 @@ const BookingPage = () => {
   
   return (
     <>
-    <Grid container >
+    <Grid container style={{backgroundColor:'white'}}>
 
       <Grid item lg={12}>
 
         <NavBar />
       </Grid>
     </Grid>
-    <Grid container style={{padding:20}}>
+    <Grid container style={{padding:20,backgroundColor:'white'}}>
       
     <Grid item lg={3}>
     <SideDrawer />
     </Grid>
 
     <Grid item lg={8}>
-    <Grid item>
+    <Grid item style={{backgroundColor:'white'}}>
             <Outlet />
         </Grid>
      

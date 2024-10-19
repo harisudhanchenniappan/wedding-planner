@@ -11,12 +11,19 @@ import BudgetPlanner from './BudgetPlanner'
 import PhotographerBooking from './PhotographerBooking'
 import Home from './Home'
 import EventPreferenceForm from './EventPreferenceForm'
+import Login from './Login'
 
 'Halls', 'Decorators', 'Caterers', 'Photographers','Event-Planner','Budget-Planner'
 
 const router=createBrowserRouter([
+{
+path:'/',
+element:<Login />
+
+},
+
   {
-    path:'/',
+    path:'/bookingPage',
     element: <BookingPage />,
     children:[
       {

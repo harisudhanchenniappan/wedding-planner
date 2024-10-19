@@ -12,8 +12,14 @@ const App = () => {
     spacing={2}
     flexDirection={"row"}
     justifyContent={"flex-end"}
-    alignItems={"center"} >
-
+    alignItems={"center"} 
+    style={{
+      backgroundColor:'rgb(247,246,194)'
+    }}
+    
+    >
+      
+   
     
      <All />
 

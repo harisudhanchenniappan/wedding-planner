@@ -1,7 +1,6 @@
-import React, { useState,useEffect } from 'react';
-import './HallBooking.css'; 
+import React, { useState, useEffect } from 'react';
+import './HallBooking.css';
 import axios from 'axios';
-
 
 const HallBooking = () => {
   const [halls] = useState([
@@ -22,7 +21,7 @@ const HallBooking = () => {
   const [bookedHalls, setBookedHalls] = useState([]);
   const [selectedHall, setSelectedHall] = useState(null);
   const [bookingDetails, setBookingDetails] = useState({ name: '', date: '' });
-  
+
   const [locationFilters, setLocationFilters] = useState({
     Chennai: false,
     Coimbatore: false,
@@ -38,22 +37,21 @@ const HallBooking = () => {
     capacity: false,
   });
 
-
   useEffect(() => {
     const fetchBookedHalls = async () => {
-        const userId = localStorage.getItem('id'); 
-        if (!userId) return; 
+      const userId = localStorage.getItem('id');
+      if (!userId) return;
 
-        try {
-            const response = await axios.get(`https://wedding-planner-2.onrender.com/booked-halls/${userId}`);
-            setBookedHalls(response.data);
-        } catch (error) {
-            console.error(error.response ? error.response.data : error.message);
-        }
+      try {
+        const response = await axios.get(`https://wedding-planner-2.onrender.com/booked-halls/${userId}`);
+        setBookedHalls(response.data);
+      } catch (error) {
+        console.error(error.response ? error.response.data : error.message);
+      }
     };
 
     fetchBookedHalls();
-}, []);
+  }, []);
 
   const handleBooking = (hall) => {
     setSelectedHall(hall);
@@ -65,44 +63,43 @@ const HallBooking = () => {
   };
 
   const confirmBooking = async () => {
-    const userId = localStorage.getItem('id'); 
+    const userId = localStorage.getItem('id');
     if (!userId) {
-        alert('You must be logged in to book a hall.');
-        return;
+      alert('You must be logged in to book a hall.');
+      return;
     }
 
     try {
-        const response = await axios.post('https://wedding-planner-2.onrender.com/book-hall', {
-            userId,
-            hallId: selectedHall.id,
-            hallName: selectedHall.name,
-            bookingDetails,
-        });
-        setBookedHalls([...bookedHalls, response.data.booking]);
-        setSelectedHall(null);
-        setBookingDetails({ name: '', date: '' });
+      const response = await axios.post('https://wedding-planner-2.onrender.com/book-hall', {
+        userId,
+        hallId: selectedHall.id,
+        hallName: selectedHall.name,
+        bookingDetails,
+      });
+      setBookedHalls([...bookedHalls, response.data.booking]);
+      setSelectedHall(null);
+      setBookingDetails({ name: '', date: '' });
     } catch (error) {
-        console.error(error.response ? error.response.data : error.message);
-        alert(error.response ? error.response.data.error : 'An error occurred while booking the hall.');
+      console.error(error.response ? error.response.data : error.message);
+      alert(error.response ? error.response.data.error : 'An error occurred while booking the hall.');
     }
-};
+  };
 
-const cancelBooking = async (bookingId) => {
-  const confirmed = window.confirm('Are you sure you want to cancel this booking?');
+  const cancelBooking = async (bookingId) => {
+    const confirmed = window.confirm('Are you sure you want to cancel this booking?');
 
-  if (!confirmed) {
-      return; 
-  }
+    if (!confirmed) {
+      return;
+    }
 
-  try {
+    try {
       await axios.delete(`https://wedding-planner-2.onrender.com/cancel-booking/${bookingId}`);
-      setBookedHalls(bookedHalls.filter(booking => booking._id !== bookingId)); 
-  } catch (error) {
+      setBookedHalls(bookedHalls.filter((booking) => booking._id !== bookingId));
+    } catch (error) {
       console.error(error.response ? error.response.data : error.message);
       alert(error.response ? error.response.data.error : 'An error occurred while cancelling the booking.');
-  }
-};
-
+    }
+  };
 
   const handleLocationChange = (e) => {
     const { name, checked } = e.target;
@@ -127,7 +124,7 @@ const cancelBooking = async (bookingId) => {
     });
   };
 
-  const filteredHalls = halls.filter(hall => {
+  const filteredHalls = halls.filter((hall) => {
     const isLocationMatch = Object.keys(locationFilters).some(
       (location) => locationFilters[location] && hall.location === location
     );
@@ -136,156 +133,126 @@ const cancelBooking = async (bookingId) => {
 
     const isCapacityMatch = hall.capacity >= capacityRange[0] && hall.capacity <= capacityRange[1];
 
-    return (!activeFilters.location || isLocationMatch) &&
-           (!activeFilters.price || isPriceMatch) &&
-           (!activeFilters.capacity || isCapacityMatch);
+    return (
+      (!activeFilters.location || isLocationMatch) &&
+      (!activeFilters.price || isPriceMatch) &&
+      (!activeFilters.capacity || isCapacityMatch)
+    );
   });
 
   return (
-    <div style={{ padding: '20px', textAlign: 'center' }}>
+    <div className="hall-booking-container">
       <h1>Wedding Hall Booking</h1>
-      
-      <div>
-        <h3>Location</h3>
-        {Object.keys(locationFilters).map(location => (
-          <label key={location}>
-            <input
-              type="checkbox"
-              name={location}
-              checked={locationFilters[location]}
-              onChange={handleLocationChange}
-            />
-            {location}
-          </label>
-        ))}
-      </div>
 
-      <div>
-        <h3>Price Range</h3>
-        <input
-          type="number"
-          value={priceRange[0]}
-          onChange={(e) => {
-            setPriceRange([+e.target.value, priceRange[1]]);
-            setActiveFilters({ ...activeFilters, price: true });
-          }}
-          placeholder="Min Price"
-        />
-        <span> to </span>
-        <input
-          type="number"
-          value={priceRange[1]}
-          onChange={(e) => {
-            setPriceRange([priceRange[0], +e.target.value]);
-            setActiveFilters({ ...activeFilters, price: true });
-          }}
-          placeholder="Max Price"
-        />
-      </div>
+      <div className="filters">
+        <div className="filter-section">
+          <h3>Location</h3>
+          {Object.keys(locationFilters).map((location) => (
+            <label key={location} style={{color:'black'}}>
+              <input
+                type="checkbox"
+                name={location}
+                checked={locationFilters[location]}
+                onChange={handleLocationChange}
+              />
+              {location}
+            </label>
+          ))}
+        </div>
 
-      <div>
-        <h3>Seating Capacity Range</h3>
-        <input
-          type="number"
-          value={capacityRange[0]}
-          onChange={(e) => {
-            setCapacityRange([+e.target.value, capacityRange[1]]);
-            setActiveFilters({ ...activeFilters, capacity: true });
-          }}
-          placeholder="Min Capacity"
-        />
-        <span> to </span>
-        <input
-          type="number"
-          value={capacityRange[1]}
-          onChange={(e) => {
-            setCapacityRange([capacityRange[0], +e.target.value]);
-            setActiveFilters({ ...activeFilters, capacity: true });
-          }}
-          placeholder="Max Capacity"
-        />
-      </div>
+        <div className="filter-section">
+          <h3>Price Range</h3>
+          <input
+            type="number"
+            value={priceRange[0]}
+            onChange={(e) => {
+              setPriceRange([+e.target.value, priceRange[1]]);
+              setActiveFilters({ ...activeFilters, price: true });
+            }}
+            placeholder="Min Price"
+          />
+          <span> to </span>
+          <input
+            type="number"
+            value={priceRange[1]}
+            onChange={(e) => {
+              setPriceRange([priceRange[0], +e.target.value]);
+              setActiveFilters({ ...activeFilters, price: true });
+            }}
+            placeholder="Max Price"
+          />
+        </div>
 
-      <button onClick={clearAllFilters}>Clear All Filters</button>
+        <div className="filter-section">
+          <h3>Seating Capacity Range</h3>
+          <input
+            type="number"
+            value={capacityRange[0]}
+            onChange={(e) => {
+              setCapacityRange([+e.target.value, capacityRange[1]]);
+              setActiveFilters({ ...activeFilters, capacity: true });
+            }}
+            placeholder="Min Capacity"
+          />
+          <span> to </span>
+          <input
+            type="number"
+            value={capacityRange[1]}
+            onChange={(e) => {
+              setCapacityRange([capacityRange[0], +e.target.value]);
+              setActiveFilters({ ...activeFilters, capacity: true });
+            }}
+            placeholder="Max Capacity"
+          />
+        </div>
+
+        <button className="clear-filters" onClick={clearAllFilters}>
+          Clear All Filters
+        </button>
+      </div>
 
       {selectedHall && (
-        <div style={{ marginTop: '20px' }}>
-          <h2>Booking Form for {selectedHall.name}</h2>
-          <input
-            type="text"
-            name="name"
-            placeholder="Your Name"
-            value={bookingDetails.name}
-            onChange={handleChange}
-            required
-            style={{ marginRight: '10px' }}
-          />
-          <input
-            type="date"
-            name="date"
-            value={bookingDetails.date}
-            onChange={handleChange}
-            required
-            style={{ marginRight: '10px' }}
-          />
+        <div className="booking-form">
+          <h2>Booking for {selectedHall.name}</h2>
+          <label>
+            Your Name:
+            <input type="text" name="name" value={bookingDetails.name} onChange={handleChange} />
+          </label>
+          <label>
+            Booking Date:
+            <input type="date" name="date" value={bookingDetails.date} onChange={handleChange} />
+          </label>
           <button onClick={confirmBooking}>Confirm Booking</button>
+          <button onClick={() => setSelectedHall(null)}>Cancel</button>
         </div>
       )}
 
-
-      <h2>Booked Halls</h2>
-      <div className="hall-cards">
-                {bookedHalls.map((booking) => (
-                    <div className="hall-card" key={booking.hallId}>
-                        <img src={booking.hallImage} alt={booking.hallName} style={{ width: '100%', height: 'auto' }} />
-                        <h3>{booking.hallName}</h3>
-                        <p>Booked By: {booking.bookingDetails.name}</p>
-                        <p>Date: {new Date(booking.bookingDetails.date).toLocaleDateString()}</p>
-                        <button onClick={() => cancelBooking(booking._id)}>Cancel Booking</button>
-
-                    </div>
-                ))}
-            </div>
-
-      <h2>Available Halls</h2>
-      <div className="hall-cards">
-        {filteredHalls.map(hall => (
-          <div className="hall-card" key={hall.id}>
-            <img src={hall.image} alt={hall.name} style={{ width: '100%', height: 'auto' }} />
-            <h3>{hall.name}</h3>
-            <p>Location: {hall.location}</p>
-            <p>Capacity: {hall.capacity}</p>
-            <p>Price: ${hall.price}/day</p>
-            <button onClick={() => handleBooking(hall)} disabled={bookedHalls.some(b => b.id === hall.id)}>Book</button>
+      <h2>Your Bookings</h2>
+      <div className="booked-halls-list">
+        {bookedHalls.map((booking) => (
+          <div key={booking._id} className="booked-hall-card">
+            <h3>{booking.hallName}</h3>
+            <p>Booking Date: {booking.bookingDetails.date}</p>
+            <button onClick={() => cancelBooking(booking._id)}>Cancel Booking</button>
           </div>
         ))}
       </div>
 
-      {selectedHall && (
-        <div style={{ marginTop: '20px' }}>
-          <h2>Booking Form for {selectedHall.name}</h2>
-          <input
-            type="text"
-            name="name"
-            placeholder="Your Name"
-            value={bookingDetails.name}
-            onChange={handleChange}
-            required
-            style={{ marginRight: '10px' }}
-          />
-          <input
-            type="date"
-            name="date"
-            value={bookingDetails.date}
-            onChange={handleChange}
-            required
-            style={{ marginRight: '10px' }}
-          />
-          <button onClick={confirmBooking}>Confirm Booking</button>
-        </div>
-      )}
+      <h2>Available Halls</h2>
 
-      
+      <div className="hall-list">
+        {filteredHalls.map((hall) => (
+          <div key={hall.id} className="hall-card">
+            <img src={hall.image} alt={hall.name} />
+            <h2>{hall.name}</h2>
+            <p>{hall.location}</p>
+            <p>Capacity: {hall.capacity}</p>
+            <p>Price: ${hall.price}</p>
+            <button onClick={() => handleBooking(hall)}>Book Now</button>
+          </div>
+        ))}
+      </div>
+
       
     </div>
   );

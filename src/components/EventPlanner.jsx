@@ -77,55 +77,54 @@ const EventPlanner = () => {
   };
 
   return (
-    <div style={{ padding: '20px', textAlign: 'center' }}>
-      <h1>Wedding Event Planner</h1>
-      <h2>Registered Events</h2>
-      
-      <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
-        <input
-          type="text"
-          name="name"
-          value={newEvent.name}
-          onChange={handleChange}
-          placeholder="Event Name"
-          required
-          style={{ marginRight: '10px' }}
-        />
-        <input
-          type="datetime-local"
-          name="time"
-          value={newEvent.time}
-          onChange={handleChange}
-          required
-          style={{ marginRight: '10px' }}
-        />
-        <button type="submit">{editMode.isEditing ? 'Update Event' : 'Add Event'}</button>
-      </form>
-      
-      <button onClick={sortEvents} style={{ marginBottom: '20px' }}>Sort by Time</button>
+    <div className="container">
+  <h1>Wedding Event Planner</h1>
+  
 
-      <table style={{ margin: '0 auto', border: '1px solid #ccc', width: '50%' }}>
-        <thead>
-          <tr>
-            <th style={{ padding: '10px' }}>Event Name</th>
-            <th style={{ padding: '10px' }}>Scheduled Time</th>
-            <th style={{ padding: '10px' }}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {events.map(event => (
-            <tr key={event._id}>
-              <td style={{ padding: '10px' }}>{event.name}</td>
-              <td style={{ padding: '10px' }}>{new Date(event.time).toLocaleString()}</td>
-              <td style={{ padding: '10px' }}>
-                <button onClick={() => editEvent(event._id)}>Edit</button>
-                <button onClick={() => deleteEvent(event._id)} style={{ marginLeft: '10px' }}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+  <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
+    <input
+      type="text"
+      name="name"
+      value={newEvent.name}
+      onChange={handleChange}
+      placeholder="Event Name"
+      required
+    />
+    <input
+      type="datetime-local"
+      name="time"
+      value={newEvent.time}
+      onChange={handleChange}
+      required
+    />
+    <button type="submit">{editMode.isEditing ? 'Update Event' : 'Add Event'}</button>
+  </form>
+
+  
+  <h2 style={{color:'white'}}>Registered Events</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Event Name</th>
+        <th>Scheduled Time</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {events.map(event => (
+        <tr key={event._id}>
+          <td>{event.name}</td>
+          <td>{new Date(event.time).toLocaleString()}</td>
+          <td>
+            <button onClick={() => editEvent(event._id)}>Edit</button>
+            <button onClick={() => deleteEvent(event._id)}>Delete</button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+  <button onClick={sortEvents} className="sort-button">Sort by Time</button>
+</div>
   );
 };
 

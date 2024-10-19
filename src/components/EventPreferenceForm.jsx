@@ -145,7 +145,7 @@ const EventPreferenceForm = () => {
 
       {Array.isArray(submittedData) && submittedData.length > 0 && ( 
         <div className="submitted-data">
-          <h2>Your Event Preferences:</h2>
+          <h2 style={{color:'white'}}>Your Event Preferences:</h2>
           {submittedData.map((data, index) => (
             <div key={data._id} className="event-entry">
               <p><strong>Event Name:</strong> {data.eventName}</p>

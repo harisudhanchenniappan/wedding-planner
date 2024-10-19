@@ -1,0 +1,132 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+    padding: 20px;
+  }
+  
+  h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+  }
+  
+  h2 {
+    color: #34495e;
+    margin-bottom: 20px;
+  }
+  
+  input[type="number"] {
+    padding: 10px;
+    margin: 10px 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    width: 120px;
+    outline: none;
+    transition: border-color 0.3s ease;
+  }
+  
+  input[type="number"]:focus {
+    border-color: #007bff;
+  }
+  
+  .photographer-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+  }
+  
+  .card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  .card h3 {
+    color: #007bff;
+    margin-bottom: 15px;
+  }
+  
+  .card p {
+    color: #555;
+    font-size: 15px;
+  }
+
+  .booked-card {
+    width: 280px; 
+    background-color: #f0f0f0;
+    border: 2px solid green;
+    margin: 10px auto;
+  }
+  
+  .card button {
+    padding: 10px 20px;
+    margin-top: 15px;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .card button:hover {
+    background-color: #218838;
+  }
+  
+  button.cancel {
+    background-color: #dc3545;
+  }
+  
+  button.cancel:hover {
+    background-color: #c82333;
+  }
+  
+  label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    font-size: 14px;
+  }
+  
+  input[type="checkbox"] {
+    margin-right: 8px;
+  }
+  
+  
+  @media (max-width: 1200px) {
+    .photographer-cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .photographer-cards {
+      grid-template-columns: 1fr;
+    }
+  
+    input[type="number"] {
+      width: 100px;
+    }
+  
+    .card {
+      padding: 15px;
+    }
+  
+    button {
+      padding: 8px 15px;
+    }
+  }
+  

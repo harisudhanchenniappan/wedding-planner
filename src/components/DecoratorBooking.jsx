@@ -28,10 +28,12 @@ const DecoratorBooking = () => {
 
   const [bookedDecorators, setBookedDecorators] = useState([]);
   const [bookingDate, setBookingDate] = useState('');
+  const [minBudgetFilter, setMinBudgetFilter] = useState('');
 
   useEffect(() => {
     const fetchBookedDecorators = async () => {
       const userId = localStorage.getItem('id'); 
+      //console.log(userId)
       if (userId) {
         try {
           const response = await axios.get(`https://wedding-planner-2.onrender.com/booked-decorators/${userId}`);
@@ -60,7 +62,7 @@ const DecoratorBooking = () => {
         bookingDate,
         theme: decorator.theme,
         contactNumber: decorator.contact,
-        minBudget:decorator.minBudget
+        minBudget: decorator.minBudget,
       });
       setBookedDecorators(prevBookings => [...prevBookings, response.data.booking]);
       setBookingDate('');
@@ -84,12 +86,22 @@ const DecoratorBooking = () => {
     }
   };
 
+  const filteredDecorators = decorators.filter(decorator => {
+    if (minBudgetFilter) {
+      return decorator.minBudget >= parseInt(minBudgetFilter);
+    }
+    return true;
+  });
+
   return (
-    <div style={{ padding: '20px', textAlign: 'center' }}>
+    <div style={{ padding: '20px', textAlign: 'center',
+      backgroundColor:'white'
+      
+    }}>
       <h1>Decorator Booking for Indian Weddings</h1>
 
       <h2>Booked Decorators</h2>
-      <div className="decorator-cards">
+      <div id="booked-decorators" className="decorator-cards">
         {bookedDecorators.map((booking) => (
           <div className="decorator-card" key={booking._id}>
             <h3>{booking.decoratorName}</h3>
@@ -103,8 +115,26 @@ const DecoratorBooking = () => {
       </div>
 
       <h2>Available Decorators</h2>
-      <div className="decorator-cards">
-        {decorators.map(decorator => (
+
+      <div className="filter-section">
+        <label htmlFor="minBudgetFilter" style={{color:'black'}}>Filter by Minimum Budget: </label>
+        <select
+          id="minBudgetFilter"
+          className="filter-select"
+          value={minBudgetFilter}
+          onChange={(e) => setMinBudgetFilter(e.target.value)}
+        >
+          <option value="">All</option>
+          <option value="15000">₹15,000+</option>
+          <option value="20000">₹20,000+</option>
+          <option value="25000">₹25,000+</option>
+          <option value="30000">₹30,000+</option>
+          <option value="35000">₹35,000+</option>
+        </select>
+      </div>
+
+      <div id="available-decorators" className="decorator-cards">
+        {filteredDecorators.map(decorator => (
           <div className="decorator-card" key={decorator.id}>
             <h3>{decorator.name}</h3>
             <p>Min Budget: ₹{decorator.minBudget}</p>
@@ -114,7 +144,7 @@ const DecoratorBooking = () => {
               type="date"
               value={bookingDate}
               onChange={(e) => setBookingDate(e.target.value)}
-              placeholder="Select Booking Date" 
+              placeholder="Select Booking Date"
             />
             <button onClick={() => bookDecorator(decorator)}>
               Book Decorator

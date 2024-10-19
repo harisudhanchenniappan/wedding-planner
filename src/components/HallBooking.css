@@ -1,40 +1,221 @@
-.hall-cards {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin: 20px 0;
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f0f5; 
+  margin: 0;
+  padding: 0;
+}
+
+.hall-booking-container {
+  width: 95%;
+  margin: 0 auto;
+  max-width: 1400px;
+  padding: 20px;
+  background-color: #ffffff; 
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); 
+}
+
+
+.filters {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  position: sticky;
+  top: 0;
+  background-color: #0066cc; 
+  padding: 10px;
+  z-index: 100;
+  border-radius: 8px;
+}
+
+.filter-section {
+  margin: 10px;
+  color: #ffffff; 
+}
+
+.filter-section h3 {
+  margin: 0 0 10px;
+  font-size: 1.1em;
+  color: #ffcc00; 
+}
+
+.filter-section input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+input[type="number"] {
+  width: 80px;
+  padding: 5px;
+  margin-right: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.clear-filters {
+  height: 50px;
+  align-items: center;
+  margin-top: 30px;
+  padding: 5px 15px; 
+  background-color: red; 
+  color: white; 
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 0.9em; 
+  margin-left: 10px;
+}
+
+.clear-filters:hover {
+  background-color: #ffd633; 
+}
+
+
+.hall-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.hall-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #e6f7ff; 
+  text-align: center;
+  transition: box-shadow 0.3s ease;
+}
+
+.hall-card:hover {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); 
+}
+
+.hall-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.hall-card h2 {
+  font-size: 1.4em;
+  margin: 10px 0;
+  color: #0066cc;
+}
+
+.hall-card p {
+  color: #333;
+  font-size: 1em;
+  margin: 5px 0;
+}
+
+.hall-card button {
+  background-color: #0066cc;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.hall-card button:hover {
+  background-color: #004d99; 
+}
+
+
+.booking-form {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #ffe6cc; 
+}
+
+.booking-form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.booking-form input[type="text"],
+.booking-form input[type="date"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.booking-form button {
+  background-color: #ffcc00;
+  color: #0066cc;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.booking-form button:hover {
+  background-color: #ffd633;
+}
+
+
+.booked-halls-list {
+  margin-top: 20px;
+  border-bottom: 1px solid black;
+}
+
+.booked-hall-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #e6ffe6; 
+  margin-bottom: 10px;
+}
+
+.booked-hall-card h3 {
+  margin: 0;
+  color: #0066cc;
+}
+
+.booked-hall-card button {
+  background-color: #dc3545;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.booked-hall-card button:hover {
+  background-color: #c82333;
+}
+
+
+@media (min-width: 1024px) {
+  .hall-list {
+    grid-template-columns: repeat(3, 1fr);
   }
-  
-  .hall-card {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 15px;
-    margin: 10px;
-    width: 250px;
-    text-align: left;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
+}
+
+@media (max-width: 768px) {
+  .hall-list {
+    grid-template-columns: repeat(2, 1fr);
   }
-  
-  .hall-card:hover {
-    transform: scale(1.05);
+
+  .filters {
+    flex-direction: column;
   }
-  
-  button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 8px 12px;
-    cursor: pointer;
+
+  .filter-section {
+    width: 100%;
   }
-  
-  button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .hall-list {
+    grid-template-columns: repeat(1, 1fr);
   }
-  
-  button:hover:not(:disabled) {
-    background-color: #0056b3;
-  }
-  
+}

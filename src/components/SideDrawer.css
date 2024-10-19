@@ -1,0 +1,42 @@
+.menu-button {
+    display: none;
+    margin: 16px;
+    background-color: #1976d2;
+    color: white;
+    font-weight: bold;
+    position: sticky;  
+    top: 0;            
+    z-index: 1000;     
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+.desktop-menu {
+  display: flex;
+}
+
+.list-item {
+  background-color: #ffcccb;
+  border-radius: 100px;
+  margin-bottom: 10px;
+}
+
+.list-item:hover{
+  display: 1;
+}
+
+.list-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+@media (max-width: 1200px) {
+  .desktop-menu {
+    display: none;
+  }
+  .menu-button {
+    display: block;
+  }
+}

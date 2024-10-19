@@ -21,7 +21,7 @@ const NavBar = () => {
     return (
         <AppBar color="transparent" position='static'>
             <Grid container
-                style={{ margin: "auto" }}
+                style={{ margin: "auto", backgroundColor: '#ffcccb'}}
                 spacing={2}
                 justifyContent={"space-between"}
                 alignItems={"center"}
@@ -34,11 +34,16 @@ const NavBar = () => {
 
                 <Grid item style={{ paddingRight: 20 }}>
                     {isLoggedIn ? (
-                        <Link to={'/'}>
+                       
                         <Button onClick={handleLogout}> 
-                            Logout
+                           <Link to={'/'} style={{
+                            textDecoration:'none',
+                            border:'1px solid black',
+                            padding:'10px',
+                            borderRadius:'50px'
+                           }}>  Logout</Link>
                         </Button>
-                        </Link>
+                        
                         
                     ) : (
                         <Grid container spacing={2}>
