@@ -56,14 +56,12 @@ const eventSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, required: true },
   });
 
-  const budgetItemSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    cost: { type: Number, required: true },
-    amountPaid: { type: Number, default: 0 },
-    initialBudget:{ type: Number, required: true },
-    userId: { type: String, required: true }, 
+  const budgetSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    category: String,
+    amount: Number,
+    paid: Number
   });
-
   const formEventSchema = new mongoose.Schema({
     userId: String,
     eventName: String,
@@ -76,7 +74,7 @@ const eventSchema = new mongoose.Schema({
   const EventPreferenceModel = mongoose.model('EventPreference', formEventSchema);
   
   
-  const BudgetModel = mongoose.model('BudgetPlanner', budgetItemSchema);
+  const BudgetModel = mongoose.model('BudgetPlanner', budgetSchema);
   
   
 const EventModel = mongoose.model('EventPlanner', eventSchema);

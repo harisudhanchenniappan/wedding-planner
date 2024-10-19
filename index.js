@@ -300,7 +300,7 @@ app.get('/events', async (req, res) => {
     }
   });
   
-  // Endpoint to fetch event preferences by user ID
+ 
   app.get('/api/event-preferences/:userId', async (req, res) => {
     const { userId } = req.params;
   
@@ -322,6 +322,56 @@ app.get('/events', async (req, res) => {
     const { id } = req.params;
     await EventPreferenceModel.findByIdAndDelete(id);
     res.sendStatus(204);
+  });
+
+
+  app.get('/budgets', async (req, res) => {
+    const userId = req.headers['x-user-id'];
+    try {
+      const budgets = await BudgetModel.find({ userId });
+      res.json(budgets);
+    } catch (error) {
+      res.status(500).send('Server error');
+    }
+  });
+  
+  app.post('/budgets', async (req, res) => {
+    const { category, amount, paid } = req.body;
+    const userId = req.headers['x-user-id'];
+    const newBudget = new BudgetModel({ userId, category, amount, paid });
+  
+    try {
+      const budget = await newBudget.save();
+      res.json(budget);
+    } catch (error) {
+      res.status(500).send('Server error');
+    }
+  });
+  
+  app.put('/budgets/:id', async (req, res) => {
+    const { paid } = req.body;
+    const userId = req.headers['x-user-id'];
+  
+    try {
+      const updatedBudget = await BudgetModel.findOneAndUpdate(
+        { _id: req.params.id, userId },
+        { paid },
+        { new: true }
+      );
+      res.json(updatedBudget);
+    } catch (error) {
+      res.status(500).send('Server error');
+    }
+  });
+  
+  app.delete('/budgets/:id', async (req, res) => {
+    const userId = req.headers['x-user-id'];
+    try {
+      await BudgetModel.findOneAndDelete({ _id: req.params.id, userId });
+      res.sendStatus(204);
+    } catch (error) {
+      res.status(500).send('Server error');
+    }
   });
 
 
