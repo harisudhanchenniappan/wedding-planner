@@ -17,13 +17,13 @@ import Login from './Login'
 
 const router=createBrowserRouter([
 {
-path:'/login',
+path:'/',
 element:<Login />
 
 },
 
   {
-    path:'/',
+    path:'/book',
     element: <BookingPage />,
     children:[
       {
@@ -31,35 +31,35 @@ element:<Login />
         element:<Home />
       },
       {
-        path:'/Home',
+        path:'/book/Home',
         element:<Home />
       },
       {
-      path:'/Halls',
+      path:'/book/Halls',
       element:<HallBooking />,
     },
     {
-      path:'/Decorators',
+      path:'/book/Decorators',
       element:<DecoratorBooking />,
     },
     {
-      path:'/Caterers',
+      path:'/book/Caterers',
       element:<CatererBooking />,
     },
     {
-      path:'/Event-Planner',
+      path:'/book/Event-Planner',
       element:<EventPlanner />,
     },
     {
-      path:'/Budget-Planner',
+      path:'/book/Budget-Planner',
       element:<BudgetPlanner />,
     },
     {
-      path:'/Photographers',
+      path:'/book/Photographers',
       element:<PhotographerBooking />,
     },
     {
-      path:'/Event-Preference-Form',
+      path:'/book/Event-Preference-Form',
       element:<EventPreferenceForm />,
     },
   ]

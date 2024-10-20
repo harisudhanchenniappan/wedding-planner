@@ -21,7 +21,7 @@ export default function SideDrawer() {
       <List>
         {['Home','Halls', 'Decorators', 'Caterers', 'Photographers','Event-Planner','Budget-Planner','Event-Preference-Form'].map((text, index) => (
           <ListItem key={text} className='list-item'>
-            <Link to={`/${text}`} className='list-link'>
+            <Link to={`/book/${text}`} className='list-link'>
               <ListItemButton>
                 <ListItemText primary={text} />
               </ListItemButton>

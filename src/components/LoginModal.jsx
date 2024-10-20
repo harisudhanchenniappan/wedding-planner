@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import { Grid } from '@mui/material'; 
 import axios from 'axios';
+import {useNavigate} from 'react-router-dom'
 
 const style = {
     position: 'absolute',
@@ -35,6 +36,8 @@ const LoginModal = () => {
     const [username, setUsername] = React.useState(''); 
     const [password, setPassword] = React.useState('');
 
+    const navigate=useNavigate()
+
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
@@ -53,6 +56,7 @@ const LoginModal = () => {
             localStorage.setItem('isLoggedIn', 'true');
             handleClose();
             window.location.reload(); 
+            navigate('/login')
         } catch (error) {
             console.error(error.response ? error.response.data : error.message);
             alert(error.response ? error.response.data.error : 'An error occurred');

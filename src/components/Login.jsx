@@ -63,7 +63,8 @@ const Login = () => {
     <Grid item>
                 {userId ? (
                        <Grid item>
-                        <Link to={'/bookingPage'}>
+                        <h3>Logged in successfully!!!</h3>
+                        <Link to={'/book'}>
                         <Button style={{
                             backgroundColor:'rgb(25,118,210)',
                             color:'white'
