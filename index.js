@@ -16,6 +16,10 @@ app.use(bodyParser.json());
 
 connectDB();
 
+app.get('/',(req,res)=>{
+  res.send('server started successfully')
+})
+
 app.post('/signup', async (req, res) => {
     const { username, password, email, age } = req.body;
 
